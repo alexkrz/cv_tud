@@ -11,9 +11,7 @@ def loaddata(path):
         Bayer data as numpy array (H,W)
     """
 
-    #
-    # You code here
-    #
+    return np.load(path)
 
 
 def separatechannels(bayerdata):
@@ -28,9 +26,20 @@ def separatechannels(bayerdata):
         red, green, and blue channel as numpy array (H,W)
     """
 
-    #
-    # You code here
-    #
+    r_mask = np.zeros(bayerdata.shape)
+    r_mask[0::2, 1::2] = 1
+    r = bayerdata * r_mask
+    
+    g_mask = np.zeros(bayerdata.shape)
+    g_mask[0::2, 0::2] = 1
+    g_mask[1::2, 1::2] = 1
+    g = bayerdata * g_mask
+
+    b_mask = np.zeros(bayerdata.shape)
+    b_mask[1::2, 0::2] = 1
+    b = bayerdata * b_mask
+
+    return r, g, b
 
 
 def assembleimage(r, g, b):
@@ -42,9 +51,8 @@ def assembleimage(r, g, b):
         Image as numpy array (H,W,3)
     """
 
-    #
-    # You code here
-    #
+    img = np.stack((r, g, b), axis=-1)
+    return img
 
 
 def interpolate(r, g, b):
