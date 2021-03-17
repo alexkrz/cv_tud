@@ -1,4 +1,6 @@
+import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def display_image(img):
@@ -8,9 +10,7 @@ def display_image(img):
         Image as numpy array (H,W,3)
     """
 
-    #
-    # You code here
-    #
+    plt.imshow(img)
 
 
 def save_as_npy(path, img):
@@ -20,9 +20,7 @@ def save_as_npy(path, img):
         Image as numpy array (H,W,3)
     """
 
-    #
-    # You code here
-    #
+    np.save(os.path.join("data", path), img)
 
 
 def load_npy(path):
@@ -34,9 +32,7 @@ def load_npy(path):
         Image as numpy array (H,W,3)
     """
 
-    #
-    # You code here
-    #
+    return np.load(os.path.join("data", path))
 
 
 def mirror_horizontal(img):
@@ -49,9 +45,7 @@ def mirror_horizontal(img):
         A horizontally mirrored numpy array (H,W,3).
     """
 
-    #
-    # You code here
-    #
+    return np.flip(img, axis=1)
 
 
 def display_images(img1, img2):
@@ -61,6 +55,8 @@ def display_images(img1, img2):
         Two image numpy arrays
     """
 
-    #
-    # You code here
-    #
+    fig, axes = plt.subplots(1, 2)
+    axes[0].imshow(img1)
+    axes[0].set_title("Original Image")
+    axes[1].imshow(img2)
+    axes[1].set_title("Flipped Image")
