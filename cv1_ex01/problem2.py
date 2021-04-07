@@ -65,6 +65,13 @@ def interpolate(r, g, b):
         Interpolated image as numpy array (H,W,3)
     """
 
-    #
-    # You code here
-    #
+    rb_filter = np.array([[1/4, 1/2, 1/4], [1/2, 1, 1/2], [1/4, 1/2, 1/4]])
+    g_filter = np.array([[0, 1/4, 0], [1/4, 1, 1/4], [0, 1/4, 0]])
+
+    ch_r = convolve(r, rb_filter, mode='mirror')
+    ch_g = convolve(g, g_filter, mode='mirror')
+    ch_b = convolve(b, rb_filter, mode='mirror')
+
+    img = np.stack((ch_r, ch_g, ch_b), axis=-1)
+
+    return img

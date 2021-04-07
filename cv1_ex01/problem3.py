@@ -1,4 +1,6 @@
+from math import sin, cos
 import numpy as np
+import numpy.linalg as LA
 import matplotlib.pyplot as plt
 
 
@@ -30,9 +32,8 @@ def cart2hom(points):
     points_hom: a np array of points in homogeneous coordinates
   """
 
-  #
-  # You code here
-  #
+  points_hom = np.insert(points, points.shape[0], 1, axis=0)
+  return points_hom
 
 
 def hom2cart(points):
@@ -42,12 +43,13 @@ def hom2cart(points):
     points: a np array of points in homogenous coordinates
 
   Returns:
-    points_hom: a np array of points in cartesian coordinates
+    points_cart: a np array of points in cartesian coordinates
   """
 
-  #
-  # You code here
-  #
+  w = points[-1, :]
+  points = points / w
+  points_cart = points[:, :-1]
+  return points_cart
 
 
 def gettranslation(v):
@@ -60,9 +62,9 @@ def gettranslation(v):
     T: translation matrix in homogeneous coordinates
   """
 
-  #
-  # You code here
-  #
+  T = np.eye(4)
+  T[:3, 3] = v
+  return T
 
 
 def getxrotation(d):
@@ -75,9 +77,12 @@ def getxrotation(d):
     Rx: rotation matrix
   """
 
-  #
-  # You code here
-  #
+  d = np.radians(d)
+  Rx = np.array([ [1, 0, 0, 0], 
+                  [0, cos(d), -sin(d), 0],
+                  [0, sin(d), cos(d), 0],
+                  [0, 0, 0, 1]])
+  return Rx
 
 
 def getyrotation(d):
@@ -90,9 +95,12 @@ def getyrotation(d):
     Ry: rotation matrix
   """
 
-  #
-  # You code here
-  #
+  d = np.radians(d)
+  Ry = np.array([ [cos(d), 0, sin(d), 0], 
+                  [0, 1, 0, 0],
+                  [-sin(d), 0, cos(d), 0],
+                  [0, 0, 0, 1]])
+  return Ry
 
 
 def getzrotation(d):
@@ -105,9 +113,12 @@ def getzrotation(d):
     Rz: rotation matrix
   """
 
-  #
-  # You code here
-  #
+  d = np.radians(d)
+  Rz = np.array([ [cos(d), -sin(d), 0, 0], 
+                  [sin(d), cos(d), 0, 0],
+                  [0, 0, 1, 0],
+                  [0, 0, 0, 1]])
+  return Rz
 
 
 
@@ -123,9 +134,10 @@ def getcentralprojection(principal, focal):
     L: central projection matrix
   """
 
-  #
-  # You code here
-  #
+  L = np.array([  [focal, 0, principal[0], 0],
+                  [0, focal, principal[1], 0],
+                  [0, 0, 1, 0] ])
+  return L
 
 
 def getfullprojection(T, Rx, Ry, Rz, L):
@@ -143,9 +155,9 @@ def getfullprojection(T, Rx, Ry, Rz, L):
     M: matrix that summarizes extrinsic transformations
   """
 
-  #
-  # You code here
-  #
+  M = np.dot(Rz, np.dot(Rx, np.dot(Ry, T)))
+  P = np.dot(L, M)
+  return P, M
 
 
 def projectpoints(P, X):
@@ -159,9 +171,9 @@ def projectpoints(P, X):
     x: 2d points in cartesian coordinates
   """
 
-  #
-  # You code here
-  #
+  x = np.dot(P, X)
+  x = x / x[-1, :]
+  return x
 
 
 def loadpoints():
@@ -171,9 +183,8 @@ def loadpoints():
     x: np array of points loaded from obj2d.npy
   """
 
-  #
-  # You code here
-  #
+  x = np.load("data/obj2d.npy")
+  return x
 
 
 def loadz():
@@ -183,9 +194,8 @@ def loadz():
     z: np array containing the z-coordinates
   """
 
-  #
-  # You code here
-  #
+  z = np.load("data/zs.npy")
+  return z
 
 
 def invertprojection(L, P2d, z):
@@ -201,9 +211,10 @@ def invertprojection(L, P2d, z):
     P3d: 3d cartesian camera coordinates of the points
   """
 
-  #
-  # You code here
-  #
+  print(np.shape(P2d))
+  P2d = np.insert(P2d, 2, 1, axis=0)
+  P3d = np.dot(LA.inv(L[:, :3]), (P2d * z))
+  return P3d
 
 
 def inverttransformation(M, P3d):
@@ -218,9 +229,9 @@ def inverttransformation(M, P3d):
     X: 3d points after the extrinsic transformations have been reverted
   """
 
-  #
-  # You code here
-  #
+  P3d = np.insert(P3d, 3, 1, axis=0)
+  X = np.dot(LA.inv(M), P3d)
+  return X
 
 
 def p3multiplecoice():
@@ -233,4 +244,4 @@ def p3multiplecoice():
   2: All transformations commute.
   '''
 
-  return -1
+  return 0
