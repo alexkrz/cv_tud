@@ -24,9 +24,9 @@ def createfilters():
     fx, fy: filters as described in the problem assignment
   """
 
-  #
-  # You code here
-  #
+  fx = 1/8 * np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
+  fy = 1/8 * np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
+  return fx, fy
 
 
 def filterimage(I, fx, fy):
@@ -41,9 +41,9 @@ def filterimage(I, fx, fy):
     Ix, Iy: images filtered by fx and fy respectively
   """
 
-  #
-  # You code here
-  #
+  Ix = ndimage.convolve(I, fx, mode='mirror')
+  Iy = ndimage.convolve(I, fy, mode='mirror')
+  return Ix, Iy
 
 
 def detectedges(Ix, Iy, thr):
@@ -57,9 +57,9 @@ def detectedges(Ix, Iy, thr):
     edges: (H,W) array that contains the magnitude of the image gradient at edges and 0 otherwise
   """
 
-  #
-  # You code here
-  #
+  edges = np.sqrt(Ix**2 + Iy**2)
+  edges = edges > thr
+  return edges
 
 
 def nonmaxsupp(edges, Ix, Iy):
